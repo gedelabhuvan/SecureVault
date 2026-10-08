@@ -231,7 +231,7 @@ function Home() {
                     VAULT & SECURITY OPTIONS
                    ================================= */}
 
-                <section className="mt-16 grid gap-8 md:grid-cols-3">
+               <section className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
 
 
                     {/* =================================
@@ -335,7 +335,32 @@ function Home() {
                             🛡️ View Login Activity
                         </button>
 
+
                     </div>
+                    {/* Security Alerts */}
+<div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-xl transition duration-300 hover:border-red-500/40">
+
+    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-red-500/20 text-5xl">
+        🚨
+    </div>
+
+    <h3 className="mt-7 text-2xl font-bold">
+        Security Alerts
+    </h3>
+
+    <p className="mt-4 leading-7 text-slate-400">
+        Monitor and manage security alerts, suspicious activities,
+        and important security events.
+    </p>
+
+    <button
+        onClick={() => navigate("/security-alerts")}
+        className="mt-6 w-full rounded-xl bg-red-600 px-6 py-3.5 font-semibold transition hover:bg-red-500"
+    >
+        🚨 View Security Alerts
+    </button>
+
+</div>
 
                 </section>
 
@@ -478,9 +503,185 @@ function Home() {
                     </p>
 
                 </div>
+                 {/* Security Overview */}
+<section className="mt-16">
+    <h2 className="mb-8 text-center text-2xl font-bold">
+        Security Overview
+    </h2>
+
+    <div className="grid gap-6 md:grid-cols-3">
+
+        {/* Password Health */}
+        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-7 shadow-xl">
+            <div className="text-4xl">🔐</div>
+
+            <h3 className="mt-5 text-xl font-bold">
+                Password Health
+            </h3>
+
+            <p className="mt-3 text-sm leading-6 text-slate-400">
+                Review your saved credentials and maintain strong,
+                secure passwords.
+            </p>
+
+            <button
+                onClick={() => navigate("/vault")}
+                className="mt-5 w-full rounded-xl bg-cyan-600 px-5 py-3 font-semibold transition hover:bg-cyan-500"
+            >
+                Check Password Health
+            </button>
+        </div>
+
+        {/* Security Analytics */}
+        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-7 shadow-xl">
+            <div className="text-4xl">📊</div>
+
+            <h3 className="mt-5 text-xl font-bold">
+                Security Analytics
+            </h3>
+
+            <p className="mt-3 text-sm leading-6 text-slate-400">
+                View login statistics, security activity, and
+                security insights.
+            </p>
+
+            <button
+                onClick={() => navigate("/security-analytics")}
+                className="mt-5 w-full rounded-xl bg-purple-600 px-5 py-3 font-semibold transition hover:bg-purple-500"
+            >
+                View Analytics
+            </button>
+        </div>
+
+        {/* Security Alerts */}
+        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-7 shadow-xl">
+            <div className="text-4xl">🚨</div>
+
+            <h3 className="mt-5 text-xl font-bold">
+                Security Alerts
+            </h3>
+
+            <p className="mt-3 text-sm leading-6 text-slate-400">
+                Monitor suspicious activities and important
+                security alerts.
+            </p>
+
+            <button
+                onClick={() => navigate("/security-alerts")}
+                className="mt-5 w-full rounded-xl bg-red-600 px-5 py-3 font-semibold transition hover:bg-red-500"
+            >
+                View Alerts
+            </button>
+        </div>
+
+        {/* Device Management */}
+<div className="rounded-2xl border border-slate-800 bg-slate-900 p-7 shadow-xl">
+    <div className="text-4xl">📱</div>
+
+    <h3 className="mt-5 text-xl font-bold">
+        Device Management
+    </h3>
+
+    <p className="mt-3 text-sm leading-6 text-slate-400">
+        View, trust, untrust, and remove devices connected
+        to your SecureVault account.
+    </p>
+
+    <button
+        onClick={() => navigate("/devices")}
+        className="mt-5 w-full rounded-xl bg-blue-600 px-5 py-3 font-semibold transition hover:bg-blue-500"
+    >
+        Manage Devices
+    </button>
+</div>
+
+{/* Active Sessions */}
+<div className="rounded-2xl border border-slate-800 bg-slate-900 p-7 shadow-xl">
+    <div className="text-4xl">🖥️</div>
+
+    <h3 className="mt-5 text-xl font-bold">
+        Active Sessions
+    </h3>
+
+    <p className="mt-3 text-sm leading-6 text-slate-400">
+        View and manage your active login sessions and revoke unwanted sessions.
+    </p>
+
+    <button
+        onClick={() => navigate("/sessions")}
+        className="mt-5 w-full rounded-xl bg-cyan-600 px-5 py-3 font-semibold transition hover:bg-cyan-500"
+    >
+        Manage Sessions
+    </button>
+</div>
+
+{/* Notifications */}
+<div className="rounded-2xl border border-slate-800 bg-slate-900 p-7 shadow-xl">
+    <div className="text-4xl">🔔</div>
+
+    <h3 className="mt-5 text-xl font-bold">
+        Notifications
+    </h3>
+
+    <p className="mt-3 text-sm leading-6 text-slate-400">
+        View security, login, sharing, and account notifications.
+    </p>
+
+    <button
+        onClick={() => navigate("/notifications")}
+        className="mt-5 w-full rounded-xl bg-cyan-600 px-5 py-3 font-semibold transition hover:bg-cyan-500"
+    >
+        View Notifications
+    </button>
+</div>
+
+{/* Admin User Management */}
+<div className="rounded-2xl border border-slate-800 bg-slate-900 p-7 shadow-xl">
+    <div className="text-4xl">👤</div>
+
+    <h3 className="mt-5 text-xl font-bold">
+        User Management
+    </h3>
+
+    <p className="mt-3 text-sm leading-6 text-slate-400">
+        View registered users and manage account roles.
+    </p>
+
+    <button
+        onClick={() => navigate("/admin/users")}
+        className="mt-5 w-full rounded-xl bg-cyan-600 px-5 py-3 font-semibold transition hover:bg-cyan-500"
+    >
+        Manage Users
+    </button>
+</div>
+
+{/* Reports */}
+<div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <div className="text-4xl">📊</div>
+
+    <h3 className="mt-5 text-xl font-bold">
+        Reports
+    </h3>
+
+    <p className="mt-3 text-sm leading-6 text-slate-400">
+        Export your credential data and download CSV reports.
+    </p>
+
+    <button
+        onClick={() => navigate("/reports")}
+        className="mt-5 w-full rounded-xl bg-cyan-600 px-5 py-3 font-semibold hover:bg-cyan-500"
+    >
+        View Reports
+    </button>
+</div>
+
+    </div>
+</section>
+
 
             </footer>
 
+           
 
         </div>
     );

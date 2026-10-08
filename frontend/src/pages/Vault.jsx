@@ -9,6 +9,8 @@ function Vault() {
     // =========================================================
 
     const [credentials, setCredentials] = useState([]);
+    const [favoriteCredentials, setFavoriteCredentials] = useState([]);
+const [showFavorites, setShowFavorites] = useState(false);
 
     // =========================================================
     // SHARED CREDENTIALS
@@ -26,6 +28,10 @@ function Vault() {
     const [password, setPassword] = useState("");
 
     const [editingId, setEditingId] = useState(null);
+    const [category, setCategory] = useState("");
+
+    const [searchText, setSearchText] = useState("");
+    const [sortBy, setSortBy] = useState("");
 
     // =========================================================
     // SHARING FORM
@@ -110,6 +116,35 @@ function Vault() {
 
     const token = localStorage.getItem("token");
 
+    const displayedCredentials = credentials
+    .filter((credential) =>
+        credential.title
+            ?.toLowerCase()
+            .includes(searchText.toLowerCase())
+    )
+    .filter((credential) => !showFavorites || credential.favorite)
+    .sort((a, b) => {
+        if (sortBy === "title") {
+            return (a.title || "").localeCompare(
+                b.title || "",
+                undefined,
+                { sensitivity: "base" }
+            );
+        }
+
+        if (sortBy === "newest") {
+            return new Date(b.createdAt || 0) -
+                   new Date(a.createdAt || 0);
+        }
+
+        if (sortBy === "oldest") {
+            return new Date(a.createdAt || 0) -
+                   new Date(b.createdAt || 0);
+        }
+
+        return 0;
+    });
+
     // =========================================================
     // FETCH MY CREDENTIALS
     // =========================================================
@@ -151,6 +186,38 @@ function Vault() {
             setLoading(false);
         }
     };
+
+    const fetchFavoriteCredentials = async () => {
+    try {
+        const response = await fetch(
+            "http://localhost:8080/api/vault/credentials/favorites",
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        let data = {};
+
+        try {
+            data = await response.json();
+        } catch {
+            // No response body
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Failed to load favorites"
+            );
+        }
+
+        setFavoriteCredentials(data);
+    } catch (err) {
+        setError(err.message);
+    }
+};
 
     // =========================================================
     // FETCH SHARED WITH ME
@@ -206,6 +273,7 @@ function Vault() {
         }
 
         fetchCredentials();
+        fetchFavoriteCredentials();
         fetchSharedCredentials();
     }, []);
 
@@ -278,7 +346,7 @@ function Vault() {
         setTitle(credential.title);
         setUsername(credential.username);
         setPassword(credential.password);
-
+        setCategory(credential.category);
         setMessage("");
         setError("");
     };
@@ -293,6 +361,7 @@ function Vault() {
         setTitle("");
         setUsername("");
         setPassword("");
+        setCategory("");
 
         setMessage("");
         setError("");
@@ -340,6 +409,7 @@ function Vault() {
                     title: title.trim(),
                     username: username.trim(),
                     password,
+                    category: category || null,
                 }),
             });
 
@@ -369,7 +439,7 @@ function Vault() {
             setTitle("");
             setUsername("");
             setPassword("");
-
+            setCategory("");
             fetchCredentials();
         } catch (err) {
             setError(err.message);
@@ -431,6 +501,54 @@ function Vault() {
             setError(err.message);
         }
     };
+
+    // =========================================================
+// TOGGLE FAVORITE
+// =========================================================
+
+const handleToggleFavorite = async (credential) => {
+    setMessage("");
+    setError("");
+
+    try {
+        const newFavoriteStatus = !credential.favorite;
+
+        const response = await fetch(
+            `http://localhost:8080/api/vault/credentials/${credential.id}/favorite?favorite=${newFavoriteStatus}`,
+            {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        let data = {};
+
+        try {
+            data = await response.json();
+        } catch {
+            // No response body
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                    "Failed to update favorite status"
+            );
+        }
+
+        setMessage(
+            newFavoriteStatus
+                ? "Credential added to favorites."
+                : "Credential removed from favorites."
+        );
+
+        fetchCredentials();
+    } catch (err) {
+        setError(err.message);
+    }
+};
 
     // =========================================================
     // OPEN SHARE FORM
@@ -1160,6 +1278,50 @@ function Vault() {
                             onSubmit={handleSubmit}
                             className="space-y-5"
                         >
+                        {/* SEARCH & SORT */}
+
+<div className="flex flex-col sm:flex-row gap-3 mb-6">
+
+    <input
+        type="text"
+        value={searchText}
+        onChange={(event) =>
+            setSearchText(event.target.value)
+        }
+        placeholder="🔎 Search credentials..."
+        className="flex-1 h-11 px-4 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-600 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
+    />
+
+    <select
+        value={sortBy}
+       onChange={(event) => {
+    const value = event.target.value;
+
+    if (value === "favorite") {
+        setShowFavorites(true);
+        setSortBy("");
+    } else {
+        setShowFavorites(false);
+        setSortBy(value);
+    }
+}}
+        className="h-11 px-4 rounded-xl bg-slate-950 border border-slate-700 text-white outline-none focus:border-cyan-400"
+    >
+        <option value="">Sort By</option>
+        <option value="title">Title</option>
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+        <option value="favorite">Favorites</option>
+    </select>
+    <button
+    type="button"
+    onClick={() => setShowFavorites(!showFavorites)}
+    className="h-10 px-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm font-semibold hover:bg-yellow-500/20 transition"
+>
+    {showFavorites ? "⭐ All Credentials" : "⭐ Favorites"}
+</button>
+
+</div>
 
                             {/* TITLE */}
 
@@ -1212,6 +1374,37 @@ function Vault() {
                                 />
 
                             </div>
+
+                            {/* CATEGORY */}
+
+<div>
+
+    <label
+        htmlFor="category"
+        className="block text-sm font-medium text-slate-300 mb-2"
+    >
+        Category
+    </label>
+
+    <select
+        id="category"
+        value={category}
+        onChange={(event) =>
+            setCategory(event.target.value)
+        }
+        className="w-full h-12 px-4 rounded-xl bg-slate-950/80 border border-slate-700 text-white outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
+    >
+        <option value="">Select Category</option>
+        <option value="Website Login">Website Login</option>
+        <option value="Email Account">Email Account</option>
+        <option value="Banking">Banking</option>
+        <option value="Social Media">Social Media</option>
+        <option value="Application">Application</option>
+        <option value="API Key">API Key</option>
+        <option value="Secure Note">Secure Note</option>
+    </select>
+
+</div>
 
                             {/* PASSWORD */}
 
@@ -1591,7 +1784,7 @@ function Vault() {
 
                             <div className="space-y-3">
 
-                                {credentials.map(
+                                {displayedCredentials.map(
                                     (credential) => (
 
                                         <div
@@ -1626,6 +1819,20 @@ function Vault() {
                                                     </div>
 
                                                 </div>
+                                                <button
+    type="button"
+    onClick={() =>
+        handleToggleFavorite(credential)
+    }
+    className="w-9 h-9 shrink-0 rounded-lg bg-slate-900 border border-slate-700 hover:border-yellow-400/40 transition"
+    title={
+        credential.favorite
+            ? "Remove from favorites"
+            : "Add to favorites"
+    }
+>
+    {credential.favorite ? "⭐" : "☆"}
+</button>
 
                                             </div>
 
