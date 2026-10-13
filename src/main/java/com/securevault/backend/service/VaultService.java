@@ -14,9 +14,11 @@ import com.securevault.backend.repository.UserRepository;
 import java.util.Comparator;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 
 @Service
 public class VaultService {
+        @CacheEvict (value = "credentials", key = "#email")
 
         @Transactional
 public boolean setFavorite(Long id, boolean favorite, String email) {

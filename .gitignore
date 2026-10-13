@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+# Keep local configuration and secrets out of Git
+src/main/resources/application.properties

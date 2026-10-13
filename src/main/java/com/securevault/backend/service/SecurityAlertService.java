@@ -4,6 +4,7 @@ import com.securevault.backend.entity.SecurityAlert;
 import com.securevault.backend.entity.User;
 import com.securevault.backend.repository.SecurityAlertRepository;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class SecurityAlertService {
@@ -41,5 +42,10 @@ public class SecurityAlertService {
         alert.setStatus(SecurityAlert.AlertStatus.RESOLVED);
 
         securityAlertRepository.save(alert);
+    }
+    public List<SecurityAlert> getAlertsForUser(Long userId) {
+        return securityAlertRepository.findByUserId(
+                userId
+        );
     }
 }

@@ -22,6 +22,19 @@ public class SecurityAlertController {
         this.securityAlertService = securityAlertService;
         this.userRepository = userRepository;
     }
+    @GetMapping
+public ResponseEntity<?> getMyAlerts(Authentication authentication) {
+
+    String email = authentication.getName();
+
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() ->
+                    new RuntimeException("User not found"));
+
+    return ResponseEntity.ok(
+            securityAlertService.getAlertsForUser(user.getId())
+    );
+}
 
     @PostMapping
     public ResponseEntity<SecurityAlert> createAlert(
